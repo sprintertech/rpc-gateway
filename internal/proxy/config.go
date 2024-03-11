@@ -22,4 +22,5 @@ type Config struct {
 	Targets            []NodeProviderConfig
 	HealthChecks       HealthCheckConfig
 	HealthcheckManager *HealthCheckManager
+	Name               string
 }

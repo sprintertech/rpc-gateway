@@ -29,6 +29,7 @@ func createConfig() Config {
 			SuccessThreshold: 0,
 		},
 		Targets: []NodeProviderConfig{},
+		Name:    "test",
 	}
 }
 
@@ -70,7 +71,7 @@ func TestHttpFailoverProxyRerouteRequests(t *testing.T) {
 		Targets: rpcGatewayConfig.Targets,
 		Config:  rpcGatewayConfig.HealthChecks,
 		Logger:  slog.New(slog.NewTextHandler(os.Stderr, nil)),
-	})
+	}, "test")
 	assert.NoError(t, err)
 	assert.NotNil(t, healthcheckManager)
 
@@ -128,7 +129,7 @@ func TestHttpFailoverProxyDecompressRequest(t *testing.T) {
 		Targets: rpcGatewayConfig.Targets,
 		Config:  rpcGatewayConfig.HealthChecks,
 		Logger:  slog.New(slog.NewTextHandler(os.Stderr, nil)),
-	})
+	}, "test")
 	assert.NotNil(t, healthcheckManager)
 	assert.NoError(t, err)
 
@@ -189,7 +190,7 @@ func TestHttpFailoverProxyWithCompressionSupportedTarget(t *testing.T) {
 		Targets: rpcGatewayConfig.Targets,
 		Config:  rpcGatewayConfig.HealthChecks,
 		Logger:  slog.New(slog.NewTextHandler(os.Stderr, nil)),
-	})
+	}, "test")
 	assert.NotNil(t, healthcheckManager)
 	assert.NoError(t, err)
 
@@ -260,7 +261,7 @@ func TestHTTPFailoverProxyWhenCannotConnectToPrimaryProvider(t *testing.T) {
 		Targets: rpcGatewayConfig.Targets,
 		Config:  rpcGatewayConfig.HealthChecks,
 		Logger:  slog.New(slog.NewTextHandler(os.Stderr, nil)),
-	})
+	}, "test")
 	assert.NotNil(t, healthcheckManager)
 	assert.NoError(t, err)
 

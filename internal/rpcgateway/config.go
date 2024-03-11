@@ -6,6 +6,7 @@ import (
 )
 
 type RPCGatewayConfig struct { //nolint:revive
+	Name         string                     `yaml:"name"`
 	Metrics      metrics.Config             `yaml:"metrics"`
 	Proxy        proxy.ProxyConfig          `yaml:"proxy"`
 	HealthChecks proxy.HealthCheckConfig    `yaml:"healthChecks"`

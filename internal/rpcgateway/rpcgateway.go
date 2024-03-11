@@ -58,7 +58,7 @@ func (r *RPCGateway) Stop(c context.Context) error {
 	)
 }
 
-func NewRPCGateway(config RPCGatewayConfig) (*RPCGateway, error) {
+func NewRPCGateway(config RPCGatewayConfig, metricsServer *metrics.Server) (*RPCGateway, error) {
 	logLevel := slog.LevelWarn
 	if os.Getenv("DEBUG") == "true" {
 		logLevel = slog.LevelDebug
@@ -78,7 +78,7 @@ func NewRPCGateway(config RPCGatewayConfig) (*RPCGateway, error) {
 				slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{
 					Level: logLevel,
 				})),
-		})
+		}, config.Name)
 	if err != nil {
 		return nil, errors.Wrap(err, "healthcheckmanager failed")
 	}
@@ -89,6 +89,7 @@ func NewRPCGateway(config RPCGatewayConfig) (*RPCGateway, error) {
 			Targets:            config.Targets,
 			HealthChecks:       config.HealthChecks,
 			HealthcheckManager: hcm,
+			Name:               config.Name,
 		},
 	)
 	if err != nil {
@@ -107,14 +108,10 @@ func NewRPCGateway(config RPCGatewayConfig) (*RPCGateway, error) {
 	r.Handle("/", proxy)
 
 	return &RPCGateway{
-		config: config,
-		proxy:  proxy,
-		hcm:    hcm,
-		metrics: metrics.NewServer(
-			metrics.Config{
-				Port: config.Metrics.Port,
-			},
-		),
+		config:  config,
+		proxy:   proxy,
+		hcm:     hcm,
+		metrics: metricsServer,
 		server: &http.Server{
 			Addr:              fmt.Sprintf(":%s", config.Proxy.Port),
 			Handler:           r,
@@ -127,7 +124,7 @@ func NewRPCGateway(config RPCGatewayConfig) (*RPCGateway, error) {
 
 // NewRPCGatewayFromConfigFile creates an instance of RPCGateway from provided
 // configuration file.
-func NewRPCGatewayFromConfigFile(s string) (*RPCGateway, error) {
+func NewRPCGatewayFromConfigFile(s string, server *metrics.Server) (*RPCGateway, error) {
 	data, err := os.ReadFile(s)
 	if err != nil {
 		return nil, err
@@ -139,5 +136,8 @@ func NewRPCGatewayFromConfigFile(s string) (*RPCGateway, error) {
 		return nil, err
 	}
 
-	return NewRPCGateway(config)
+	fmt.Println("Starting RPC Gateway for " + config.Name + " on port: " + config.Proxy.Port)
+
+	// Pass the metrics server as an argument to NewRPCGateway.
+	return NewRPCGateway(config, server)
 }

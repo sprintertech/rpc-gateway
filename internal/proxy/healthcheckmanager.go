@@ -21,19 +21,19 @@ type HealthCheckManagerConfig struct {
 type HealthCheckManager struct {
 	hcs    []*HealthChecker
 	logger *slog.Logger
-
+	
 	metricRPCProviderInfo        *prometheus.GaugeVec
 	metricRPCProviderStatus      *prometheus.GaugeVec
 	metricRPCProviderBlockNumber *prometheus.GaugeVec
 	metricRPCProviderGasLimit    *prometheus.GaugeVec
 }
 
-func NewHealthCheckManager(config HealthCheckManagerConfig) (*HealthCheckManager, error) {
+func NewHealthCheckManager(config HealthCheckManagerConfig, name string) (*HealthCheckManager, error) {
 	hcm := &HealthCheckManager{
 		logger: config.Logger,
 		metricRPCProviderInfo: promauto.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: "zeroex_rpc_gateway_provider_info",
+				Name: "zeroex_rpc_gateway_provider_info_" + name,
 				Help: "Gas limit of a given provider",
 			}, []string{
 				"index",
@@ -41,7 +41,7 @@ func NewHealthCheckManager(config HealthCheckManagerConfig) (*HealthCheckManager
 			}),
 		metricRPCProviderStatus: promauto.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: "zeroex_rpc_gateway_provider_status",
+				Name: "zeroex_rpc_gateway_provider_status_" + name,
 				Help: "Current status of a given provider by type. Type can be either healthy or tainted.",
 			}, []string{
 				"provider",
@@ -49,14 +49,14 @@ func NewHealthCheckManager(config HealthCheckManagerConfig) (*HealthCheckManager
 			}),
 		metricRPCProviderBlockNumber: promauto.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: "zeroex_rpc_gateway_provider_block_number",
+				Name: "zeroex_rpc_gateway_provider_block_number_" + name,
 				Help: "Block number of a given provider",
 			}, []string{
 				"provider",
 			}),
 		metricRPCProviderGasLimit: promauto.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: "zeroex_rpc_gateway_provider_gasLimit_number",
+				Name: "zeroex_rpc_gateway_provider_gasLimit_number_" + name,
 				Help: "Gas limit of a given provider",
 			}, []string{
 				"provider",
