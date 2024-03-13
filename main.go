@@ -3,10 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httplog/v2"
+	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/sygmaprotocol/rpc-gateway/internal/metrics"
 	"github.com/sygmaprotocol/rpc-gateway/internal/util"
@@ -22,6 +28,7 @@ type MetricsConfig struct {
 
 type Config struct {
 	Metrics  MetricsConfig   `yaml:"metrics"`
+	Port     string          `yaml:"port"`
 	Gateways []GatewayConfig `yaml:"gateways"`
 }
 
@@ -51,18 +58,47 @@ func main() {
 				return errors.Wrap(err, "failed to load config")
 			}
 
+			logLevel := slog.LevelWarn
+			if os.Getenv("DEBUG") == "true" {
+				logLevel = slog.LevelDebug
+			}
+
+			logger := httplog.NewLogger("rpc-gateway", httplog.Options{
+				JSON:           true,
+				RequestHeaders: true,
+				LogLevel:       logLevel,
+			})
+
 			metricsServer := metrics.NewServer(metrics.Config{Port: uint(config.Metrics.Port)})
+
+			r := chi.NewRouter()
+			r.Use(httplog.RequestLogger(logger))
+			r.Use(middleware.Recoverer)
+			server := &http.Server{
+				Addr:              fmt.Sprintf(":%s", config.Port),
+				Handler:           r,
+				WriteTimeout:      time.Second * 15,
+				ReadTimeout:       time.Second * 15,
+				ReadHeaderTimeout: time.Second * 5,
+			}
+			defer server.Close()
 
 			var wg sync.WaitGroup
 			for _, gatewayConfig := range config.Gateways {
 				wg.Add(1)
 				go func(gwConfig GatewayConfig) {
 					defer wg.Done()
-					err := startGateway(c, gwConfig, metricsServer)
+					err := startGateway(c, gwConfig, r, metricsServer)
 					if err != nil {
 						fmt.Fprintf(os.Stderr, "error starting gateway '%s': %v\n", gwConfig.Name, err)
 					}
 				}(gatewayConfig)
+			}
+
+			fmt.Println("Starting RPC Gateway server on port: " + config.Port)
+			err = server.ListenAndServe()
+			if err != nil {
+				return err
 			}
 
 			wg.Wait()
@@ -76,8 +112,8 @@ func main() {
 	}
 }
 
-func startGateway(ctx context.Context, config GatewayConfig, server *metrics.Server) error {
-	service, err := rpcgateway.NewRPCGatewayFromConfigFile(config.ConfigFile, server)
+func startGateway(ctx context.Context, config GatewayConfig, router *chi.Mux, metricsServer *metrics.Server) error {
+	service, err := rpcgateway.NewRPCGatewayFromConfigFile(config.ConfigFile, router, metricsServer)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("%s rpc-gateway failed", config.Name))
 	}
