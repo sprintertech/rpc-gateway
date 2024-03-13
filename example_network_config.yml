@@ -1,0 +1,20 @@
+
+proxy:
+  port: "3000" # port for RPC gateway
+  upstreamTimeout: "1s" # when is a request considered timed out
+
+healthChecks:
+  interval: "5s" # how often to do healthchecks
+  timeout: "1s" # when should the timeout occur and considered unhealthy
+  failureThreshold: 2 # how many failed checks until marked as unhealthy
+  successThreshold: 1 # how many successes to be marked as healthy again
+
+targets: # the order here determines the failover order
+  - name: "Cloudflare"
+    connection:
+      http: # ws is supported by default, it will be a sticky connection.
+        url: "https://cloudflare-eth.com"
+  - name: "Alchemy"
+    connection:
+      http: # ws is supported by default, it will be a sticky connection.
+        url: "https://alchemy.com/rpc/<apikey>"

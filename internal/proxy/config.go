@@ -12,7 +12,7 @@ type HealthCheckConfig struct {
 }
 
 type ProxyConfig struct { // nolint:revive
-	Port            string        `yaml:"port"`
+	Path            string        `yaml:"path"`
 	UpstreamTimeout time.Duration `yaml:"upstreamTimeout"`
 }
 
@@ -22,4 +22,5 @@ type Config struct {
 	Targets            []NodeProviderConfig
 	HealthChecks       HealthCheckConfig
 	HealthcheckManager *HealthCheckManager
+	Name               string
 }

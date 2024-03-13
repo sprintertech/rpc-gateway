@@ -1,4 +1,12 @@
-/rpc-gateway
+/app/rpc-gateway
 /main
 /tags
 /vendor
+
+
+.idea
+
+config.yml
+config_*
+
+prometheus

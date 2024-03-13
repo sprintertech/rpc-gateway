@@ -1,4 +1,4 @@
-module github.com/0xProject/rpc-gateway
+module github.com/sygmaprotocol/rpc-gateway
 
 go 1.21
 

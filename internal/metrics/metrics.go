@@ -25,7 +25,7 @@ func (s *Server) Stop() error {
 func NewServer(config Config) *Server {
 	r := chi.NewRouter()
 
-	r.Use(middleware.Heartbeat("/healthz"))
+	r.Use(middleware.Heartbeat("/health"))
 	r.Handle("/metrics", promhttp.Handler())
 
 	return &Server{
