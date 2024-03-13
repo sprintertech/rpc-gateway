@@ -71,6 +71,13 @@ func main() {
 			})
 
 			metricsServer := metrics.NewServer(metrics.Config{Port: uint(config.Metrics.Port)})
+			go func() {
+				err = metricsServer.Start()
+				defer metricsServer.Stop()
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "error starting metrics server: %v\n", err)
+				}
+			}()
 
 			r := chi.NewRouter()
 			r.Use(httplog.RequestLogger(logger))
@@ -89,7 +96,7 @@ func main() {
 				wg.Add(1)
 				go func(gwConfig GatewayConfig) {
 					defer wg.Done()
-					err := startGateway(c, gwConfig, r, metricsServer)
+					err := startGateway(c, gwConfig, r)
 					if err != nil {
 						fmt.Fprintf(os.Stderr, "error starting gateway '%s': %v\n", gwConfig.Name, err)
 					}
@@ -113,8 +120,8 @@ func main() {
 	}
 }
 
-func startGateway(ctx context.Context, config GatewayConfig, router *chi.Mux, metricsServer *metrics.Server) error {
-	service, err := rpcgateway.NewRPCGatewayFromConfigFile(config.ConfigFile, router, metricsServer)
+func startGateway(ctx context.Context, config GatewayConfig, router *chi.Mux) error {
+	service, err := rpcgateway.NewRPCGatewayFromConfigFile(config.ConfigFile, router)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("%s rpc-gateway failed", config.Name))
 	}

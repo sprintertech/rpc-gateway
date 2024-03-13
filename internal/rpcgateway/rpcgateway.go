@@ -11,7 +11,6 @@ import (
 	"github.com/carlmjohnson/flowmatic"
 	"github.com/go-chi/chi/v5"
 	"github.com/pkg/errors"
-	"github.com/sygmaprotocol/rpc-gateway/internal/metrics"
 	"github.com/sygmaprotocol/rpc-gateway/internal/proxy"
 )
 
@@ -37,7 +36,7 @@ func (r *RPCGateway) Stop(c context.Context) error {
 	)
 }
 
-func NewRPCGateway(config RPCGatewayConfig, router *chi.Mux, metricsServer *metrics.Server) (*RPCGateway, error) {
+func NewRPCGateway(config RPCGatewayConfig, router *chi.Mux) (*RPCGateway, error) {
 	logLevel := slog.LevelWarn
 	if os.Getenv("DEBUG") == "true" {
 		logLevel = slog.LevelDebug
@@ -80,7 +79,7 @@ func NewRPCGateway(config RPCGatewayConfig, router *chi.Mux, metricsServer *metr
 
 // NewRPCGatewayFromConfigFile creates an instance of RPCGateway from provided
 // configuration file.
-func NewRPCGatewayFromConfigFile(fileOrUrl string, router *chi.Mux, metricsServer *metrics.Server) (*RPCGateway, error) {
+func NewRPCGatewayFromConfigFile(fileOrUrl string, router *chi.Mux) (*RPCGateway, error) {
 	config, err := util.LoadYamlFile[RPCGatewayConfig](fileOrUrl)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load config")
@@ -89,5 +88,5 @@ func NewRPCGatewayFromConfigFile(fileOrUrl string, router *chi.Mux, metricsServe
 	fmt.Println("Starting RPC Gateway for " + config.Name + " on path: /" + config.Proxy.Path)
 
 	// Pass the metrics router as an argument to NewRPCGateway.
-	return NewRPCGateway(*config, router, metricsServer)
+	return NewRPCGateway(*config, router)
 }
