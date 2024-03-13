@@ -3,19 +3,19 @@ package rpcgateway
 import (
 	"context"
 	"fmt"
-	"github.com/0xProject/rpc-gateway/internal/util"
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/0xProject/rpc-gateway/internal/metrics"
-	"github.com/0xProject/rpc-gateway/internal/proxy"
 	"github.com/carlmjohnson/flowmatic"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v2"
 	"github.com/pkg/errors"
+	"github.com/sygmaprotocol/rpc-gateway/internal/metrics"
+	"github.com/sygmaprotocol/rpc-gateway/internal/proxy"
 )
 
 type RPCGateway struct {

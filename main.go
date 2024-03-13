@@ -3,15 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/0xProject/rpc-gateway/internal/metrics"
-	"github.com/0xProject/rpc-gateway/internal/util"
+	"github.com/sygmaprotocol/rpc-gateway/internal/metrics"
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 
-	"github.com/0xProject/rpc-gateway/internal/rpcgateway"
 	"github.com/pkg/errors"
+	"github.com/sygmaprotocol/rpc-gateway/internal/rpcgateway"
 	"github.com/urfave/cli/v2"
 )
 
@@ -65,6 +65,7 @@ func main() {
 			}
 
 			wg.Wait()
+
 			return nil
 		},
 	}
@@ -86,5 +87,6 @@ func startGateway(ctx context.Context, config GatewayConfig, server *metrics.Ser
 	}
 
 	<-ctx.Done()
+
 	return errors.Wrap(service.Stop(ctx), fmt.Sprintf("cannot stop %s rpc-gateway", config.Name))
 }
