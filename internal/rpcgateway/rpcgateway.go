@@ -3,9 +3,10 @@ package rpcgateway
 import (
 	"context"
 	"fmt"
-	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 	"log/slog"
 	"os"
+
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 
 	"github.com/carlmjohnson/flowmatic"
 	"github.com/go-chi/chi/v5"

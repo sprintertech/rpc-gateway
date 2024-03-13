@@ -3,9 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/httplog/v2"
 	"log/slog"
 	"net/http"
 	"os"
@@ -13,6 +10,10 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httplog/v2"
 
 	"github.com/sygmaprotocol/rpc-gateway/internal/metrics"
 	"github.com/sygmaprotocol/rpc-gateway/internal/util"
