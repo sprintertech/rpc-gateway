@@ -35,15 +35,15 @@ jobs:
           RPC_GATEWAY_NODE_URL_1: ${{ secrets.RPC_GATEWAY_NODE_URL_1 }}
           RPC_GATEWAY_NODE_URL_2: ${{ secrets.RPC_GATEWAY_NODE_URL_2 }}
 
-#  vulncheck:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/setup-go@v5
-#        with:
-#          go-version: ${{ env.GOLANGVERSION }}
-#      - uses: actions/checkout@v4
-#      - uses: 0xProject/setup-govulncheck@v2
-#      - run: govulncheck ./...
+  vulncheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GOLANGVERSION }}
+      - uses: actions/checkout@v4
+      - uses: 0xProject/setup-govulncheck@v2
+      - run: govulncheck ./...
 
   lint:
     runs-on: ubuntu-latest
