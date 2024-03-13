@@ -21,7 +21,7 @@ type HealthCheckManagerConfig struct {
 type HealthCheckManager struct {
 	hcs    []*HealthChecker
 	logger *slog.Logger
-	
+
 	metricRPCProviderInfo        *prometheus.GaugeVec
 	metricRPCProviderStatus      *prometheus.GaugeVec
 	metricRPCProviderBlockNumber *prometheus.GaugeVec
