@@ -4,7 +4,7 @@ metrics:
   port: 9090 # port for prometheus metrics, served on /metrics and /
 
 gateways:
-  - config-file: "config_holesky.yml"
+  - configFile: "config_holesky.yml"
     name: "Holesky gateway"
-  - config-file: "config_sepolia.yml"
+  - configFile: "config_sepolia.yml"
     name: "Sepolia gateway"

@@ -25,7 +25,7 @@ type Config struct {
 }
 
 type GatewayConfig struct {
-	ConfigFile string `yaml:"config-file"`
+	ConfigFile string `yaml:"configFile"`
 	Name       string `yaml:"name"`
 }
 
