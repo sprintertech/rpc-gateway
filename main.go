@@ -73,7 +73,12 @@ func main() {
 			metricsServer := metrics.NewServer(metrics.Config{Port: uint(config.Metrics.Port)})
 			go func() {
 				err = metricsServer.Start()
-				defer metricsServer.Stop()
+				defer func(metricsServer *metrics.Server) {
+					err := metricsServer.Stop()
+					if err != nil {
+						fmt.Fprintf(os.Stderr, "error stopping metrics server: %v\n", err)
+					}
+				}(metricsServer)
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "error starting metrics server: %v\n", err)
 				}
