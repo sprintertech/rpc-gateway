@@ -2,11 +2,12 @@ package util
 
 import (
 	"errors"
-	"gopkg.in/yaml.v2"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 // LoadYamlFile is refactored to use a generic type T.

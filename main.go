@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/sygmaprotocol/rpc-gateway/internal/metrics"
-	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"github.com/sygmaprotocol/rpc-gateway/internal/metrics"
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 
 	"github.com/pkg/errors"
 	"github.com/sygmaprotocol/rpc-gateway/internal/rpcgateway"
