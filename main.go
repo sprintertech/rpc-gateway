@@ -77,14 +77,14 @@ func main() {
 func startGateway(ctx context.Context, config GatewayConfig, server *metrics.Server) error {
 	service, err := rpcgateway.NewRPCGatewayFromConfigFile(config.ConfigFile, server)
 	if err != nil {
-		return errors.Wrap(err, "rpc-gateway failed")
+		return errors.Wrap(err, fmt.Sprintf("%s rpc-gateway failed", config.Name))
 	}
 
 	err = service.Start(ctx)
 	if err != nil {
-		return errors.Wrap(err, "cannot start service")
+		return errors.Wrap(err, fmt.Sprintf("cannot start %s rpc-gateway", config.Name))
 	}
 
 	<-ctx.Done()
-	return errors.Wrap(service.Stop(ctx), "cannot stop service")
+	return errors.Wrap(service.Stop(ctx), fmt.Sprintf("cannot stop %s rpc-gateway", config.Name))
 }
