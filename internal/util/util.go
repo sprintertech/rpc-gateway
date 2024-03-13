@@ -47,5 +47,8 @@ func LoadYamlFile[T any](pathOrURL string) (*T, error) {
 
 func isValidURL(toTest string) bool {
 	u, err := url.Parse(toTest)
-	return err == nil && u.Scheme != "" && u.Host != ""
+	if err != nil {
+		return false
+	}
+	return u.Scheme != "" && u.Host != ""
 }
