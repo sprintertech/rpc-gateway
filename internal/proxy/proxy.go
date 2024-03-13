@@ -26,7 +26,7 @@ func NewProxy(config Config) (*Proxy, error) {
 		timeout: config.Proxy.UpstreamTimeout,
 		metricRequestDuration: promauto.NewHistogramVec(
 			prometheus.HistogramOpts{
-				Name: "zeroex_rpc_gateway_request_duration_seconds",
+				Name: "zeroex_rpc_gateway_request_duration_seconds_" + config.Name,
 				Help: "Histogram of response time for Gateway in seconds",
 				Buckets: []float64{
 					.025,
@@ -50,7 +50,7 @@ func NewProxy(config Config) (*Proxy, error) {
 			}),
 		metricRequestErrors: promauto.NewCounterVec(
 			prometheus.CounterOpts{
-				Name: "zeroex_rpc_gateway_request_errors_handled_total",
+				Name: "zeroex_rpc_gateway_request_errors_handled_total_" + config.Name,
 				Help: "The total number of request errors handled by gateway",
 			}, []string{
 				"provider",

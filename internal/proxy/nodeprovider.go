@@ -5,8 +5,8 @@ import (
 	"net/http/httputil"
 	"strings"
 
-	"github.com/0xProject/rpc-gateway/internal/middleware"
 	"github.com/go-http-utils/headers"
+	"github.com/sygmaprotocol/rpc-gateway/internal/middleware"
 )
 
 type NodeProviderConnectionHTTPConfig struct {
