@@ -17,21 +17,7 @@ func LoadYamlFile[T any](pathOrURL string) (*T, error) {
 	var err error
 
 	if isValidURL(pathOrURL) {
-		req, err := http.NewRequest(http.MethodGet, pathOrURL, nil)
-		if err != nil {
-			return nil, err
-		}
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			return nil, err
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			return nil, errors.New("failed to fetch config from URL")
-		}
-
-		data, err = io.ReadAll(resp.Body)
+		data, err = loadFileFromURL(pathOrURL)
 		if err != nil {
 			return nil, err
 		}
@@ -48,6 +34,28 @@ func LoadYamlFile[T any](pathOrURL string) (*T, error) {
 	}
 
 	return &config, nil
+}
+
+func loadFileFromURL(pathOrURL string) ([]byte, error) {
+	req, err := http.NewRequest(http.MethodGet, pathOrURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("failed to fetch config from URL")
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
 
 func isValidURL(toTest string) bool {
