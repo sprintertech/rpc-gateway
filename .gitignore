@@ -6,7 +6,7 @@
 
 .idea
 
-config.json
+config.yml
 config_*
 
 prometheus

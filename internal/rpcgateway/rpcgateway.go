@@ -3,6 +3,7 @@ package rpcgateway
 import (
 	"context"
 	"fmt"
+	"github.com/0xProject/rpc-gateway/internal/util"
 	"log/slog"
 	"net/http"
 	"os"
@@ -15,7 +16,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v2"
 	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
 )
 
 type RPCGateway struct {
@@ -125,19 +125,13 @@ func NewRPCGateway(config RPCGatewayConfig, metricsServer *metrics.Server) (*RPC
 // NewRPCGatewayFromConfigFile creates an instance of RPCGateway from provided
 // configuration file.
 func NewRPCGatewayFromConfigFile(s string, server *metrics.Server) (*RPCGateway, error) {
-	data, err := os.ReadFile(s)
+	config, err := util.LoadYamlFile[RPCGatewayConfig](s)
 	if err != nil {
-		return nil, err
-	}
-
-	var config RPCGatewayConfig
-
-	if err := yaml.Unmarshal(data, &config); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to load config")
 	}
 
 	fmt.Println("Starting RPC Gateway for " + config.Name + " on port: " + config.Proxy.Port)
 
 	// Pass the metrics server as an argument to NewRPCGateway.
-	return NewRPCGateway(config, server)
+	return NewRPCGateway(*config, server)
 }

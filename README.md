@@ -1,7 +1,3 @@
-Based on the given details and the previous code modification instructions, here's how you could update the README for the rpc-gateway project:
-
----
-
 # RPC Gateway
 
 The rpc-gateway is a failover proxy designed for node providers. It ensures high availability and reliability by automatically rerouting requests to a backup node provider when health checks indicate the primary provider is down. This process ensures uninterrupted service even in the event of node provider failures.
@@ -43,37 +39,29 @@ go test -v ./...
 For local development and testing, you can run the application with:
 
 ```console
-DEBUG=true go run . --config config.json
+DEBUG=true go run . --config config.yml
 ```
 
-The above command assumes you have a `config.json` file configured to start multiple gateways, each with its own `yml` configuration file as described previously.
+This command now uses a `config.yml` file for configuration, aligning with the updates to support YAML-based configuration.
 
 ## Configuration
 
-The rpc-gateway is highly configurable to meet different operational requirements. Below is an example configuration (`config.json`) that specifies multiple gateways, each with its own `.yml` configuration file:
-
-```json
-{
-  "gateways": [
-    {
-      "config-file": "config1.yml",
-      "name": "Chain A gateway"
-    },
-    {
-      "config-file": "config2.yml",
-      "name": "Chain B gateway"
-    }
-    // Add more gateways as needed
-  ]
-}
-```
-
-Each `.yml` configuration file can specify detailed settings for metrics, proxy behavior, health checks, and target node providers. Here is an example `.yml` configuration:
+The rpc-gateway is highly configurable to meet different operational requirements. An example YAML configuration (`config.yml`) specifies the metrics server port and multiple gateways, each with its own `.yml` configuration file:
 
 ```yaml
 metrics:
-  port: "9090" # Port for Prometheus metrics, served on /metrics and /
+  port: 9090 # Port for Prometheus metrics, served on /metrics and /
 
+gateways:
+  - config-file: "config_holesky.yml"
+    name: "Holesky gateway"
+  - config-file: "config_sepolia.yml"
+    name: "Sepolia gateway"
+```
+
+Each `.yml` configuration file for the gateways can specify detailed settings for proxy behavior, health checks, and target node providers. Here is an example of what these individual gateway configuration files might contain:
+
+```yaml
 proxy:
   port: "3000" # Port for RPC gateway
   upstreamTimeout: "1s" # When is a request considered timed out
@@ -95,6 +83,6 @@ targets: # Failover order is determined by the list order
         url: "https://alchemy.com/rpc/<apikey>"
 ```
 
-This setup allows for a flexible and robust configuration, ensuring your RPC gateway can effectively manage multiple node providers and maintain service availability.
+This updated setup ensures your RPC gateway can effectively manage multiple node providers and maintain service availability with a flexible and robust YAML-based configuration.
 
---- 
+---

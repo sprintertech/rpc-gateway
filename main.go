@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/0xProject/rpc-gateway/internal/metrics"
+	"github.com/0xProject/rpc-gateway/internal/util"
 	"os"
 	"os/signal"
 	"sync"
@@ -15,13 +15,18 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+type MetricsConfig struct {
+	Port int `yaml:"port"`
+}
+
 type Config struct {
-	Gateways []GatewayConfig `json:"gateways"`
+	Metrics  MetricsConfig   `yaml:"metrics"`
+	Gateways []GatewayConfig `yaml:"gateways"`
 }
 
 type GatewayConfig struct {
-	ConfigFile string `json:"config-file"`
-	Name       string `json:"name"`
+	ConfigFile string `yaml:"config-file"`
+	Name       string `yaml:"name"`
 }
 
 func main() {
@@ -33,20 +38,19 @@ func main() {
 		Usage: "The failover proxy for node providers.",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:        "config",
-				Usage:       "The JSON configuration file path with gateway configurations.",
-				DefaultText: "config.json",
+				Name:  "config",
+				Usage: "The YAML configuration file path with gateway configurations.",
+				Value: "config.yml", // Default configuration file name
 			},
 		},
 		Action: func(cc *cli.Context) error {
-			// configPath := cc.String("config")
-			config, err := loadConfig("./config.json")
+			configPath := cc.String("config")
+			config, err := util.LoadYamlFile[Config](configPath)
 			if err != nil {
 				return errors.Wrap(err, "failed to load config")
 			}
 
-			// Instantiate the metrics server based on the config before creating the RPCGateway instance.
-			metricsServer := metrics.NewServer(metrics.Config{Port: 9000})
+			metricsServer := metrics.NewServer(metrics.Config{Port: uint(config.Metrics.Port)})
 
 			var wg sync.WaitGroup
 			for _, gatewayConfig := range config.Gateways {
@@ -68,20 +72,6 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v", err)
 	}
-}
-
-func loadConfig(path string) (*Config, error) {
-	file, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	var config Config
-	if err := json.Unmarshal(file, &config); err != nil {
-		return nil, err
-	}
-
-	return &config, nil
 }
 
 func startGateway(ctx context.Context, config GatewayConfig, server *metrics.Server) error {
