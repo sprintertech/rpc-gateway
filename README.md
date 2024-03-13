@@ -42,11 +42,9 @@ For local development and testing, you can run the application with:
 DEBUG=true go run . --config config.yml
 ```
 
-This command now uses a `config.yml` file for configuration, aligning with the updates to support YAML-based configuration.
-
 ## Configuration
 
-The rpc-gateway is highly configurable to meet different operational requirements. An example YAML configuration (`config.yml`) specifies the metrics server port and multiple gateways, each with its own `.yml` configuration file:
+A main YAML configuration (`config.yml`) specifies the metrics server port and multiple gateways, each with its own `.yml` configuration file:
 
 ```yaml
 metrics:
@@ -59,7 +57,7 @@ gateways:
     name: "Sepolia gateway"
 ```
 
-Each `.yml` configuration file for the gateways can specify detailed settings for proxy behavior, health checks, and target node providers. Here is an example of what these individual gateway configuration files might contain:
+Each `.yml` configuration file for the gateways can specify detailed settings for proxy behavior, health checks, and target node providers. Here is an example of what these individual gateway configuration files can contain:
 
 ```yaml
 proxy:
@@ -83,6 +81,5 @@ targets: # Failover order is determined by the list order
         url: "https://alchemy.com/rpc/<apikey>"
 ```
 
-This updated setup ensures your RPC gateway can effectively manage multiple node providers and maintain service availability with a flexible and robust YAML-based configuration.
-
+Any of these configuration files can be also loaded from URL if one is provided as path.
 ---
