@@ -87,6 +87,7 @@ func main() {
 			r := chi.NewRouter()
 			r.Use(httplog.RequestLogger(logger))
 			r.Use(middleware.Recoverer)
+			r.Use(middleware.Heartbeat("/health"))
 			server := &http.Server{
 				Addr:              fmt.Sprintf(":%s", config.Port),
 				Handler:           r,

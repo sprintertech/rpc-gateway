@@ -111,7 +111,9 @@ func (h *HealthChecker) checkGasLimit(c context.Context) (uint64, error) {
 // And sets the health status based on the responses.
 func (h *HealthChecker) CheckAndSetHealth() {
 	go h.checkAndSetBlockNumberHealth()
-	go h.checkAndSetGasLeftHealth()
+
+	// Not being used for now as it requires on-chain setup
+	//	go h.checkAndSetGasLeftHealth()
 }
 
 func (h *HealthChecker) checkAndSetBlockNumberHealth() {
