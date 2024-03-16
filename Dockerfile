@@ -16,7 +16,6 @@ RUN apk add --update-cache --no-cache \
 
 COPY --from=builder /src/rpc-gateway /app/
 
-VOLUME ["/app"]
-
 USER nobody
-CMD ["/app/rpc-gateway"]
+LABEL org.opencontainers.image.source https://github.com/sygmaprotocol/rpc-gateway
+ENTRYPOINT ["/app/rpc-gateway"]
