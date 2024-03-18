@@ -2,6 +2,7 @@ package util
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -16,6 +17,7 @@ func LoadYamlFile[T any](pathOrURL string) (*T, error) {
 	var data []byte
 	var err error
 
+	fmt.Printf("Loading gateways configuration from: %s", pathOrURL)
 	if isValidURL(pathOrURL) {
 		data, err = loadFileFromURL(pathOrURL)
 		if err != nil {

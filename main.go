@@ -49,7 +49,7 @@ func main() {
 			&cli.StringFlag{
 				Name:  "config",
 				Usage: "The YAML configuration file path with gateway configurations.",
-				Value: "config.yml", // Default configuration file name
+				Value: "config.yaml", // Default configuration file name
 			},
 		},
 		Action: func(cc *cli.Context) error {
