@@ -50,7 +50,7 @@ type HealthChecker struct {
 	mu sync.RWMutex
 }
 
-func NewHealthChecker(config HealthCheckerConfig) (*HealthChecker, error) {
+func NewHealthChecker(config HealthCheckerConfig, networkName string) (*HealthChecker, error) {
 	client, err := rpc.Dial(config.URL)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func NewHealthChecker(config HealthCheckerConfig) (*HealthChecker, error) {
 	client.SetHeader("User-Agent", userAgent)
 
 	healthchecker := &HealthChecker{
-		logger:     config.Logger.With("nodeprovider", config.Name),
+		logger:     config.Logger.With("nodeprovider", config.Name).With("network", networkName),
 		client:     client,
 		httpClient: &http.Client{},
 		config:     config,

@@ -25,7 +25,7 @@ func TestBasicHealthchecker(t *testing.T) {
 		Logger:           slog.New(slog.NewTextHandler(os.Stderr, nil)),
 	}
 
-	healthchecker, err := NewHealthChecker(healtcheckConfig)
+	healthchecker, err := NewHealthChecker(healtcheckConfig, "")
 	assert.NoError(t, err)
 
 	healthchecker.Start(ctx)
