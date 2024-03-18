@@ -73,7 +73,7 @@ func NewHealthCheckManager(config HealthCheckManagerConfig, name string) (*Healt
 				Timeout:          config.Config.Timeout,
 				FailureThreshold: config.Config.FailureThreshold,
 				SuccessThreshold: config.Config.SuccessThreshold,
-			})
+			}, name)
 		if err != nil {
 			return nil, err
 		}
