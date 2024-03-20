@@ -42,9 +42,15 @@ For local development and testing, you can run the application with:
 DEBUG=true go run . --config config.yml
 ```
 
+Additionally, to load configuration from an environment variables, use the `--env` flag. Ensure the `GATEWAY_CONFIG` environment variable is set with the main configuration data.
+
+```console
+DEBUG=true go run . --env
+```
+
 ## Configuration
 
-A main YAML configuration (`config.yml`) specifies the metrics server port and multiple gateways, each with its own `.yml` configuration file:
+The main YAML configuration (`config.yml`) specifies the metrics server port and multiple gateways, each with its own `.yml` configuration file:
 
 ```yaml
 metrics:
@@ -57,7 +63,7 @@ gateways:
     name: "Sepolia gateway"
 ```
 
-Each `.yml` configuration file for the gateways can specify detailed settings for proxy behavior, health checks, and target node providers. Here is an example of what these individual gateway configuration files can contain:
+Each `.yml` configuration file for the gateways can specify detailed settings for proxy behavior, health checks, and target node providers. Here is an example of what these individual gateway configuration files might contain:
 
 ```yaml
 proxy:
@@ -81,5 +87,4 @@ targets: # Failover order is determined by the list order
         url: "https://alchemy.com/rpc/<apikey>"
 ```
 
-Any of these configuration files can be also loaded from URL if one is provided as path.
----
+This configuration can be loaded from a file path, URL, or directly from an environment variable using the `--env` flag.
