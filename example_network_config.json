@@ -1,0 +1,30 @@
+{
+  "proxy": {
+    "port": "3000",
+    "upstreamTimeout": "1s"
+  },
+  "healthChecks": {
+    "interval": "5s",
+    "timeout": "1s",
+    "failureThreshold": 2,
+    "successThreshold": 1
+  },
+  "targets": [
+    {
+      "name": "Cloudflare",
+      "connection": {
+        "http": {
+          "url": "https://cloudflare-eth.com"
+        }
+      }
+    },
+    {
+      "name": "Alchemy",
+      "connection": {
+        "http": {
+          "url": "https://alchemy.com/rpc/<apikey>"
+        }
+      }
+    }
+  ]
+}

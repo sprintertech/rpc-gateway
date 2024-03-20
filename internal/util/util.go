@@ -1,44 +1,52 @@
 package util
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
-
-	"gopkg.in/yaml.v2"
+	"time"
 )
 
-// LoadYamlFile is refactored to use a generic type T.
-// T must be a type that can be unmarshaled from JSON.
-func LoadYamlFile[T any](pathOrURL string) (*T, error) {
+// LoadJSONFile attempts to load and parse a JSON file into a Go struct. The input can be a filepath,
+// a URL, or an environment variable name containing the JSON content.
+func LoadJSONFile[T any](file string) (*T, error) {
 	var data []byte
 	var err error
 
-	fmt.Printf("Loading gateways configuration from: %s", pathOrURL)
-	if isValidURL(pathOrURL) {
-		data, err = loadFileFromURL(pathOrURL)
-		if err != nil {
-			return nil, err
-		}
+	// Check if file is an environment variable containing JSON data
+	if raw, isInENV := os.LookupEnv(file); isInENV {
+		data = []byte(raw)
 	} else {
-		data, err = os.ReadFile(pathOrURL)
+		// Load data from URL or local file
+		if IsValidURL(file) {
+			data, err = ReadFileFromURL(file)
+		} else {
+			data, err = os.ReadFile(file)
+		}
 		if err != nil {
 			return nil, err
 		}
 	}
 
+	// Parse JSON data into the specified struct type
+	return ParseJSONlFile[T](data)
+}
+
+// ParseJSONlFile parses JSON data into a struct of type T.
+func ParseJSONlFile[T any](data []byte) (*T, error) {
 	var config T
-	if err := yaml.Unmarshal(data, &config); err != nil {
+	if err := json.Unmarshal(data, &config); err != nil {
 		return nil, err
 	}
 
 	return &config, nil
 }
 
-func loadFileFromURL(pathOrURL string) ([]byte, error) {
+// ReadFileFromURL fetches the content of a file from a URL.
+func ReadFileFromURL(pathOrURL string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, pathOrURL, nil)
 	if err != nil {
 		return nil, err
@@ -50,22 +58,44 @@ func loadFileFromURL(pathOrURL string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("failed to fetch config from URL")
+		return nil, errors.New("failed to fetch config from URL: status code " + resp.Status)
 	}
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return io.ReadAll(resp.Body)
 }
 
-func isValidURL(toTest string) bool {
+// IsValidURL checks if the given string is a well-formed URL.
+func IsValidURL(toTest string) bool {
 	u, err := url.Parse(toTest)
 	if err != nil {
 		return false
 	}
 
 	return u.Scheme != "" && u.Host != ""
+}
+
+// DurationUnmarshalled is a wrapper around time.Duration to handle JSON unmarshalling.
+type DurationUnmarshalled time.Duration
+
+// UnmarshalJSON converts a JSON string to a DurationUnmarshalled.
+func (d *DurationUnmarshalled) UnmarshalJSON(b []byte) error {
+	var v interface{}
+	if err := json.Unmarshal(b, &v); err != nil {
+		return err
+	}
+	switch value := v.(type) {
+	case float64:
+		*d = DurationUnmarshalled(time.Duration(value))
+	case string:
+		var err error
+		duration, err := time.ParseDuration(value)
+		if err != nil {
+			return err
+		}
+		*d = DurationUnmarshalled(duration)
+	default:
+		return errors.New("invalid duration")
+	}
+
+	return nil
 }

@@ -1,19 +1,19 @@
 package proxy
 
 import (
-	"time"
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 )
 
 type HealthCheckConfig struct {
-	Interval         time.Duration `yaml:"interval"`
-	Timeout          time.Duration `yaml:"timeout"`
-	FailureThreshold uint          `yaml:"failureThreshold"`
-	SuccessThreshold uint          `yaml:"successThreshold"`
+	Interval         util.DurationUnmarshalled `json:"interval"`
+	Timeout          util.DurationUnmarshalled `json:"timeout"`
+	FailureThreshold uint                      `json:"failureThreshold"`
+	SuccessThreshold uint                      `json:"successThreshold"`
 }
 
 type ProxyConfig struct { // nolint:revive
-	Path            string        `yaml:"path"`
-	UpstreamTimeout time.Duration `yaml:"upstreamTimeout"`
+	Path            string                    `json:"path"`
+	UpstreamTimeout util.DurationUnmarshalled `json:"upstreamTimeout"`
 }
 
 // This struct is temporary. It's about to keep the input interface clean and simple.

@@ -7,6 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
+
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/rpc"
 )
@@ -21,16 +23,16 @@ type HealthCheckerConfig struct {
 	Logger *slog.Logger
 
 	// How often to check health.
-	Interval time.Duration `yaml:"healthcheckInterval"`
+	Interval util.DurationUnmarshalled `json:"interval"`
 
 	// How long to wait for responses before failing
-	Timeout time.Duration `yaml:"healthcheckTimeout"`
+	Timeout util.DurationUnmarshalled `json:"timeout"`
 
 	// Try FailureThreshold times before marking as unhealthy
-	FailureThreshold uint `yaml:"healthcheckInterval"`
+	FailureThreshold uint `yaml:"failureThreshold"`
 
 	// Minimum consecutive successes required to mark as healthy
-	SuccessThreshold uint `yaml:"healthcheckInterval"`
+	SuccessThreshold uint `yaml:"successThreshold"`
 }
 
 type HealthChecker struct {
@@ -93,6 +95,7 @@ func (h *HealthChecker) checkBlockNumber(c context.Context) (uint64, error) {
 // want to perform an eth_call to make sure eth_call requests are also succeding
 // as blockNumber can be either cached or routed to a different service on the
 // RPC provider's side.
+// nolint: unused
 func (h *HealthChecker) checkGasLimit(c context.Context) (uint64, error) {
 	gasLimit, err := performGasLeftCall(c, h.httpClient, h.config.URL)
 	if err != nil {
@@ -117,7 +120,7 @@ func (h *HealthChecker) CheckAndSetHealth() {
 }
 
 func (h *HealthChecker) checkAndSetBlockNumberHealth() {
-	c, cancel := context.WithTimeout(context.Background(), h.config.Timeout)
+	c, cancel := context.WithTimeout(context.Background(), time.Duration(h.config.Timeout))
 	defer cancel()
 
 	// TODO
@@ -135,8 +138,9 @@ func (h *HealthChecker) checkAndSetBlockNumberHealth() {
 	h.blockNumber = blockNumber
 }
 
+// nolint: unused
 func (h *HealthChecker) checkAndSetGasLeftHealth() {
-	c, cancel := context.WithTimeout(context.Background(), h.config.Timeout)
+	c, cancel := context.WithTimeout(context.Background(), time.Duration(h.config.Timeout))
 	defer cancel()
 
 	gasLimit, err := h.checkGasLimit(c)
@@ -154,7 +158,7 @@ func (h *HealthChecker) checkAndSetGasLeftHealth() {
 func (h *HealthChecker) Start(c context.Context) {
 	h.CheckAndSetHealth()
 
-	ticker := time.NewTicker(h.config.Interval)
+	ticker := time.NewTicker(time.Duration(h.config.Interval))
 	defer ticker.Stop()
 
 	for {

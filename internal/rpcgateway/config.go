@@ -6,9 +6,9 @@ import (
 )
 
 type RPCGatewayConfig struct { //nolint:revive
-	Name         string                     `yaml:"name"`
-	Metrics      metrics.Config             `yaml:"metrics"`
-	Proxy        proxy.ProxyConfig          `yaml:"proxy"`
-	HealthChecks proxy.HealthCheckConfig    `yaml:"healthChecks"`
-	Targets      []proxy.NodeProviderConfig `yaml:"targets"`
+	Name         string                     `json:"name"`
+	Metrics      metrics.Config             `json:"metrics"`
+	Proxy        proxy.ProxyConfig          `json:"proxy"`
+	HealthChecks proxy.HealthCheckConfig    `json:"healthChecks"`
+	Targets      []proxy.NodeProviderConfig `json:"targets"`
 }

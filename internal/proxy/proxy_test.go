@@ -12,6 +12,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
+
 	"github.com/go-http-utils/headers"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +22,7 @@ import (
 func createConfig() Config {
 	return Config{
 		Proxy: ProxyConfig{
-			UpstreamTimeout: time.Second * 3,
+			UpstreamTimeout: util.DurationUnmarshalled(time.Second * 3),
 		},
 		HealthChecks: HealthCheckConfig{
 			Interval:         0,
