@@ -67,7 +67,7 @@ func main() {
 			}
 
 			logger := configureLogger()
-			startMetricsServer(uint(config.Metrics.Port))
+			startMetricsServer(config.Metrics.Port)
 
 			r := chi.NewRouter()
 			r.Use(httplog.RequestLogger(logger))
@@ -115,6 +115,7 @@ func resolveConfigPath(config string, isENV bool) string {
 	if isENV {
 		return "GATEWAY_CONFIG"
 	}
+
 	return config
 }
 
