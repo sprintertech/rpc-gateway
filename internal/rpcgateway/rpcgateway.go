@@ -80,7 +80,7 @@ func NewRPCGateway(config RPCGatewayConfig, router *chi.Mux) (*RPCGateway, error
 // NewRPCGatewayFromConfigFile creates an instance of RPCGateway from provided
 // configuration file.
 func NewRPCGatewayFromConfigFile(configFile string, router *chi.Mux) (*RPCGateway, error) {
-	config, err := util.LoadYamlFile[RPCGatewayConfig](configFile)
+	config, err := util.LoadJSONFile[RPCGatewayConfig](configFile)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load config")
 	}

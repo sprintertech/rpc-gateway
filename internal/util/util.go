@@ -1,21 +1,22 @@
 package util
 
 import (
+	"encoding/json"
 	"errors"
-	"gopkg.in/yaml.v2"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 )
 
-// LoadYamlFile attempts to load and parse a YAML file into a Go struct. The input can be a filepath,
-// a URL, or an environment variable name containing the YAML content.
-func LoadYamlFile[T any](file string) (*T, error) {
+// LoadJSONFile attempts to load and parse a JSON file into a Go struct. The input can be a filepath,
+// a URL, or an environment variable name containing the JSON content.
+func LoadJSONFile[T any](file string) (*T, error) {
 	var data []byte
 	var err error
 
-	// Check if file is an environment variable containing YAML data
+	// Check if file is an environment variable containing JSON data
 	if raw, isInENV := os.LookupEnv(file); isInENV {
 		data = []byte(raw)
 	} else {
@@ -30,14 +31,14 @@ func LoadYamlFile[T any](file string) (*T, error) {
 		}
 	}
 
-	// Parse YAML data into the specified struct type
-	return ParseYamlFile[T](data)
+	// Parse JSON data into the specified struct type
+	return ParseJSONlFile[T](data)
 }
 
-// ParseYamlFile parses YAML data into a struct of type T.
-func ParseYamlFile[T any](data []byte) (*T, error) {
+// ParseJSONlFile parses JSON data into a struct of type T.
+func ParseJSONlFile[T any](data []byte) (*T, error) {
 	var config T
-	if err := yaml.Unmarshal(data, &config); err != nil {
+	if err := json.Unmarshal(data, &config); err != nil {
 		return nil, err
 	}
 	return &config, nil
@@ -70,4 +71,29 @@ func IsValidURL(toTest string) bool {
 	}
 
 	return u.Scheme != "" && u.Host != ""
+}
+
+// DurationUnmarshalled is a wrapper around time.Duration to handle JSON unmarshalling.
+type DurationUnmarshalled time.Duration
+
+// UnmarshalJSON converts a JSON string to a DurationUnmarshalled.
+func (d *DurationUnmarshalled) UnmarshalJSON(b []byte) error {
+	var v interface{}
+	if err := json.Unmarshal(b, &v); err != nil {
+		return err
+	}
+	switch value := v.(type) {
+	case float64:
+		*d = DurationUnmarshalled(time.Duration(value))
+	case string:
+		var err error
+		duration, err := time.ParseDuration(value)
+		if err != nil {
+			return err
+		}
+		*d = DurationUnmarshalled(duration)
+	default:
+		return errors.New("invalid duration")
+	}
+	return nil
 }

@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"context"
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 	"log/slog"
 	"os"
 	"testing"
@@ -18,8 +19,8 @@ func TestBasicHealthchecker(t *testing.T) {
 
 	healtcheckConfig := HealthCheckerConfig{
 		URL:              env.GetDefault("RPC_GATEWAY_NODE_URL_1", "https://cloudflare-eth.com"),
-		Interval:         1 * time.Second,
-		Timeout:          2 * time.Second,
+		Interval:         util.DurationUnmarshalled(1 * time.Second),
+		Timeout:          util.DurationUnmarshalled(2 * time.Second),
 		FailureThreshold: 1,
 		SuccessThreshold: 1,
 		Logger:           slog.New(slog.NewTextHandler(os.Stderr, nil)),

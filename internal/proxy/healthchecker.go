@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"context"
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 	"log/slog"
 	"net/http"
 	"sync"
@@ -21,16 +22,16 @@ type HealthCheckerConfig struct {
 	Logger *slog.Logger
 
 	// How often to check health.
-	Interval time.Duration `yaml:"healthcheckInterval"`
+	Interval util.DurationUnmarshalled `json:"interval"`
 
 	// How long to wait for responses before failing
-	Timeout time.Duration `yaml:"healthcheckTimeout"`
+	Timeout util.DurationUnmarshalled `json:"timeout"`
 
 	// Try FailureThreshold times before marking as unhealthy
-	FailureThreshold uint `yaml:"healthcheckInterval"`
+	FailureThreshold uint `yaml:"failureThreshold"`
 
 	// Minimum consecutive successes required to mark as healthy
-	SuccessThreshold uint `yaml:"healthcheckInterval"`
+	SuccessThreshold uint `yaml:"successThreshold"`
 }
 
 type HealthChecker struct {
@@ -117,7 +118,7 @@ func (h *HealthChecker) CheckAndSetHealth() {
 }
 
 func (h *HealthChecker) checkAndSetBlockNumberHealth() {
-	c, cancel := context.WithTimeout(context.Background(), h.config.Timeout)
+	c, cancel := context.WithTimeout(context.Background(), time.Duration(h.config.Timeout))
 	defer cancel()
 
 	// TODO
@@ -136,7 +137,7 @@ func (h *HealthChecker) checkAndSetBlockNumberHealth() {
 }
 
 func (h *HealthChecker) checkAndSetGasLeftHealth() {
-	c, cancel := context.WithTimeout(context.Background(), h.config.Timeout)
+	c, cancel := context.WithTimeout(context.Background(), time.Duration(h.config.Timeout))
 	defer cancel()
 
 	gasLimit, err := h.checkGasLimit(c)
@@ -154,7 +155,7 @@ func (h *HealthChecker) checkAndSetGasLeftHealth() {
 func (h *HealthChecker) Start(c context.Context) {
 	h.CheckAndSetHealth()
 
-	ticker := time.NewTicker(h.config.Interval)
+	ticker := time.NewTicker(time.Duration(h.config.Interval))
 	defer ticker.Stop()
 
 	for {

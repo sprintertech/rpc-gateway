@@ -1,5 +1,5 @@
 package metrics
 
 type Config struct {
-	Port uint `yaml:"port"`
+	Port uint `json:"port"`
 }

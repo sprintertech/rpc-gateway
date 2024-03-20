@@ -26,18 +26,18 @@ import (
 // Config represents the application configuration structure,
 // including metrics and gateway configurations.
 type Config struct {
-	Metrics  MetricsConfig   `yaml:"metrics"`
-	Port     string          `yaml:"port"`
-	Gateways []GatewayConfig `yaml:"gateways"`
+	Metrics  MetricsConfig   `json:"metrics"`
+	Port     uint            `json:"port"`
+	Gateways []GatewayConfig `json:"gateways"`
 }
 
 type MetricsConfig struct {
-	Port int `yaml:"port"`
+	Port uint `json:"port"`
 }
 
 type GatewayConfig struct {
-	ConfigFile string `yaml:"configFile"`
-	Name       string `yaml:"name"`
+	ConfigFile string `json:"configFile"`
+	Name       string `json:"name"`
 }
 
 func main() {
@@ -50,8 +50,8 @@ func main() {
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:  "config",
-				Usage: "The YAML configuration file path with gateway configurations.",
-				Value: "config.yaml", // Default configuration file name
+				Usage: "The JSON configuration file path with gateway configurations.",
+				Value: "config.JSON", // Default configuration file name
 			},
 			&cli.BoolFlag{
 				Name:  "env",
@@ -61,7 +61,7 @@ func main() {
 		},
 		Action: func(cc *cli.Context) error {
 			configPath := resolveConfigPath(cc.String("config"), cc.Bool("env"))
-			config, err := util.LoadYamlFile[Config](configPath)
+			config, err := util.LoadJSONFile[Config](configPath)
 			if err != nil {
 				return errors.Wrap(err, "failed to load config")
 			}
@@ -74,7 +74,7 @@ func main() {
 			r.Use(middleware.Recoverer)
 			r.Use(middleware.Heartbeat("/health"))
 			server := &http.Server{
-				Addr:              fmt.Sprintf(":%s", config.Port),
+				Addr:              fmt.Sprintf(":%d", config.Port),
 				Handler:           r,
 				WriteTimeout:      time.Second * 15,
 				ReadTimeout:       time.Second * 15,
@@ -94,7 +94,7 @@ func main() {
 				}(gatewayConfig)
 			}
 
-			fmt.Println("Starting RPC Gateway server on port: " + config.Port)
+			fmt.Printf("Starting RPC Gateway server on port: %d\n", config.Port)
 			err = server.ListenAndServe()
 			if err != nil {
 				return err

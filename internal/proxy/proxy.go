@@ -23,7 +23,7 @@ type Proxy struct {
 func NewProxy(config Config) (*Proxy, error) {
 	proxy := &Proxy{
 		hcm:     config.HealthcheckManager,
-		timeout: config.Proxy.UpstreamTimeout,
+		timeout: time.Duration(config.Proxy.UpstreamTimeout),
 		metricRequestDuration: promauto.NewHistogramVec(
 			prometheus.HistogramOpts{
 				Name: "zeroex_rpc_gateway_request_duration_seconds_" + config.Name,

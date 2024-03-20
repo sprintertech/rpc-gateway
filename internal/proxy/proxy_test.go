@@ -3,6 +3,7 @@ package proxy
 import (
 	"bytes"
 	"compress/gzip"
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 	"io"
 	"log/slog"
 	"net/http"
@@ -20,7 +21,7 @@ import (
 func createConfig() Config {
 	return Config{
 		Proxy: ProxyConfig{
-			UpstreamTimeout: time.Second * 3,
+			UpstreamTimeout: util.DurationUnmarshalled(time.Second * 3),
 		},
 		HealthChecks: HealthCheckConfig{
 			Interval:         0,
