@@ -39,10 +39,10 @@ go test -v ./...
 For local development and testing, you can run the application with:
 
 ```console
-DEBUG=true go run . --config config.yml
+DEBUG=true go run . --config config.json
 ```
 
-Additionally, to load configuration from an environment variables, use the `--env` flag. Ensure the `GATEWAY_CONFIG` environment variable is set with the main configuration data.
+Additionally, to load configuration from an environment variable, use the `--env` flag. Ensure the `GATEWAY_CONFIG` environment variable is set with the main configuration data.
 
 ```console
 DEBUG=true go run . --env
@@ -50,41 +50,58 @@ DEBUG=true go run . --env
 
 ## Configuration
 
-The main YAML configuration (`config.yml`) specifies the metrics server port and multiple gateways, each with its own `.yml` configuration file:
+The main configuration has been updated to use JSON format (`config.json`). It specifies the metrics server port and multiple gateways, each with its own JSON configuration file:
 
-```yaml
-metrics:
-  port: 9090 # Port for Prometheus metrics, served on /metrics and /
-
-gateways:
-  - config-file: "config_holesky.json"
-    name: "Holesky gateway"
-  - config-file: "config_sepolia.json"
-    name: "Sepolia gateway"
+```json
+{
+  "metrics": {
+    "port": 9090
+  },
+  "port": 4000,
+  "gateways": [
+    {
+      "configFile": "config_holesky.json",
+      "name": "Holesky gateway"
+    },
+    {
+      "configFile": "config_sepolia.json",
+      "name": "Sepolia gateway"
+    }
+  ]
+}
 ```
 
-Each `.yml` configuration file for the gateways can specify detailed settings for proxy behavior, health checks, and target node providers. Here is an example of what these individual gateway configuration files might contain:
+Each JSON configuration file for the gateways can specify detailed settings for proxy behavior, health checks, and target node providers. Here is an example of what these individual gateway configuration files might contain:
 
-```yaml
-proxy:
-  port: "3000" # Port for RPC gateway
-  upstreamTimeout: "1s" # When is a request considered timed out
-
-healthChecks:
-  interval: "5s" # How often to perform health checks
-  timeout: "1s" # Timeout duration for health checks
-  failureThreshold: 2 # Failed checks until a target is marked unhealthy
-  successThreshold: 1 # Successes required to mark a target healthy again
-
-targets: # Failover order is determined by the list order
-  - name: "Cloudflare"
-    connection:
-      http:
-        url: "https://cloudflare-eth.com"
-  - name: "Alchemy"
-    connection:
-      http:
-        url: "https://alchemy.com/rpc/<apikey>"
+```json
+{
+  "proxy": {
+    "port": "3000",
+    "upstreamTimeout": "1s"
+  },
+  "healthChecks": {
+    "interval": "5s",
+    "timeout": "1s",
+    "failureThreshold": 2,
+    "successThreshold": 1
+  },
+  "targets": [
+    {
+      "name": "Cloudflare",
+      "connection": {
+        "http": {
+          "url": "https://cloudflare-eth.com"
+        }
+      }
+    },
+    {
+      "name": "Alchemy",
+      "connection": {
+        "http": {
+          "url": "https://alchemy.com/rpc/<apikey>"
+        }
+      }
+    }
+  ]
+}
 ```
-
-This configuration can be loaded from a file path, URL, or directly from an environment variable using the `--env` flag.
