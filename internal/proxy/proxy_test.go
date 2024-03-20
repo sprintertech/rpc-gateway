@@ -3,7 +3,6 @@ package proxy
 import (
 	"bytes"
 	"compress/gzip"
-	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 	"io"
 	"log/slog"
 	"net/http"
@@ -12,6 +11,8 @@ import (
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 
 	"github.com/go-http-utils/headers"
 	"github.com/prometheus/client_golang/prometheus"

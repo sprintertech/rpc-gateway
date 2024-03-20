@@ -41,6 +41,7 @@ func ParseJSONlFile[T any](data []byte) (*T, error) {
 	if err := json.Unmarshal(data, &config); err != nil {
 		return nil, err
 	}
+
 	return &config, nil
 }
 
@@ -95,5 +96,6 @@ func (d *DurationUnmarshalled) UnmarshalJSON(b []byte) error {
 	default:
 		return errors.New("invalid duration")
 	}
+
 	return nil
 }

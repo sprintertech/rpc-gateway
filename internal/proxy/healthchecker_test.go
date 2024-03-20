@@ -2,11 +2,12 @@ package proxy
 
 import (
 	"context"
-	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 	"log/slog"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 
 	"github.com/caitlinelfring/go-env-default"
 	"github.com/stretchr/testify/assert"
