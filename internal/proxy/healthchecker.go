@@ -2,8 +2,10 @@ package proxy
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"sync"
 	"time"
 
@@ -60,8 +62,14 @@ func NewHealthChecker(config HealthCheckerConfig, networkName string) (*HealthCh
 
 	client.SetHeader("User-Agent", userAgent)
 
+	logger := config.Logger.With(
+		"provider", config.Name).With(
+		"network", networkName).With(
+		"process", "healthcheck",
+	)
+
 	healthchecker := &HealthChecker{
-		logger:     config.Logger.With("nodeprovider", config.Name).With("network", networkName),
+		logger:     logger,
 		client:     client,
 		httpClient: &http.Client{},
 		config:     config,
@@ -82,6 +90,11 @@ func (h *HealthChecker) checkBlockNumber(c context.Context) (uint64, error) {
 
 	err := h.client.CallContext(c, &blockNumber, "eth_blockNumber")
 	if err != nil {
+		var urlErr *url.Error
+		errors.As(err, &urlErr)
+		if urlErr.URL != "" {
+			urlErr.URL = ""
+		}
 		h.logger.Error("could not fetch block number", "error", err)
 
 		return 0, err
