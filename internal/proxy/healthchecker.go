@@ -91,8 +91,7 @@ func (h *HealthChecker) checkBlockNumber(c context.Context) (uint64, error) {
 	err := h.client.CallContext(c, &blockNumber, "eth_blockNumber")
 	if err != nil {
 		var urlErr *url.Error
-		errors.As(err, &urlErr)
-		if urlErr.URL != "" {
+		if errors.As(err, &urlErr) {
 			urlErr.URL = ""
 		}
 		h.logger.Error("could not fetch block number", "error", err)
