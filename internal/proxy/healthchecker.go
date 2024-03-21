@@ -96,6 +96,7 @@ func (h *HealthChecker) checkBlockNumber(c context.Context) (uint64, error) {
 			urlErr.URL = ""
 		}
 		h.logger.Error("could not fetch block number", "error", err)
+
 		return 0, err
 	}
 	h.logger.Debug("fetch block number completed", "blockNumber", uint64(blockNumber))
