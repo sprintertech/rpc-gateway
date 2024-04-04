@@ -98,7 +98,7 @@ func (h *HealthChecker) checkBlockNumber(c context.Context) (uint64, error) {
 
 		return 0, err
 	}
-	h.logger.Debug("fetch block number completed", "blockNumber", uint64(blockNumber))
+	h.logger.Info("fetch block number completed", "blockNumber", uint64(blockNumber))
 
 	return uint64(blockNumber), nil
 }
