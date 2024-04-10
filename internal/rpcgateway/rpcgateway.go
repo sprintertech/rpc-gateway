@@ -37,7 +37,7 @@ func (r *RPCGateway) Stop(c context.Context) error {
 }
 
 func NewRPCGateway(config RPCGatewayConfig, router *chi.Mux) (*RPCGateway, error) {
-	logLevel := slog.LevelWarn
+	logLevel := slog.LevelInfo
 	if os.Getenv("DEBUG") == "true" {
 		logLevel = slog.LevelDebug
 	}
