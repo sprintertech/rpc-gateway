@@ -136,7 +136,6 @@ func (h *HealthChecker) checkAndSetBlockNumberHealth() {
 	defer cancel()
 
 	// TODO
-	//
 	// This should be moved to a different place, because it does not do a
 	// health checking but it provides additional context.
 
