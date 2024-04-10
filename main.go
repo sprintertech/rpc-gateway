@@ -121,6 +121,7 @@ func resolveConfigPath(config string, isENV bool) string {
 
 func configureLogger() *httplog.Logger {
 	logLevel := slog.LevelInfo
+
 	if os.Getenv("DEBUG") == "true" {
 		logLevel = slog.LevelDebug
 	}
