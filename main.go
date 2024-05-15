@@ -58,15 +58,10 @@ func main() {
 				Usage: "Load configuration from environment variable named GATEWAY_CONFIG.",
 				Value: false,
 			},
-			&cli.StringFlag{
-				Name:  "username",
-				Usage: "The username for basic authentication.",
-				Value: "sygma",
-			},
-			&cli.StringFlag{
-				Name:  "password",
-				Usage: "The password for basic authentication.",
-				Value: "",
+			&cli.BoolFlag{
+				Name:  "basic-auth",
+				Usage: "Enable basic authentication.",
+				Value: false,
 			},
 		},
 		Action: func(cc *cli.Context) error {
@@ -84,13 +79,16 @@ func main() {
 			r.Use(middleware.Recoverer)
 			r.Use(middleware.Heartbeat("/health"))
 			// Add basic auth middleware
-			pass := cc.String("password")
-			if pass == "" {
-				return errors.New("password for basic authentication is required")
+			if cc.Bool("basic-auth") {
+				username := os.Getenv("GATEWAY_USERNAME")
+				password := os.Getenv("GATEWAY_PASSWORD")
+				if username == "" || password == "" {
+					return errors.New("both GATEWAY_USERNAME and GATEWAY_PASSWORD environment variables must be set for basic authentication")
+				}
+				r.Use(middleware.BasicAuth("API Realm", map[string]string{
+					username: password,
+				}))
 			}
-			r.Use(middleware.BasicAuth("API Realm", map[string]string{
-				cc.String("username"): pass,
-			}))
 
 			server := &http.Server{
 				Addr:              fmt.Sprintf(":%d", config.Port),

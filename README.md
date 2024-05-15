@@ -107,21 +107,11 @@ Each JSON configuration file for the gateways can specify detailed settings for 
 ```
 
 ## Authentication
-Basic authentication has been added to the RPC Gateway. You need to provide a username and password for access. These can be configured using CLI flags:
-
-- `--username`: The username for basic authentication.
-- `--password`: The password for basic authentication.
-
-**The password must be provided; otherwise, the application will throw an error.**
+Basic authentication can be enabled using the `--basic-auth` flag. The username and password should be set through environment variables `GATEWAY_USERNAME` and `GATEWAY_PASSWORD`, respectively.
 
 ### Running the Application
 To run the application with authentication:
 
 ```
-DEBUG=true go run . --config config.json --username myuser --password mypass
-```
-To use configuration from an environment variable:
-
-```
-DEBUG=true go run . --env --username myuser --password mypass
+DEBUG=true GATEWAY_USERNAME=myuser GATEWAY_PASSWORD=mypass go run . --config config.json --basic-auth
 ```
