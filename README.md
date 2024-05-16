@@ -105,3 +105,13 @@ Each JSON configuration file for the gateways can specify detailed settings for 
   ]
 }
 ```
+
+## Authentication
+Basic authentication can be enabled using the `--basic-auth` flag. The username and password should be set through environment variables `GATEWAY_USERNAME` and `GATEWAY_PASSWORD`, respectively.
+
+### Running the Application
+To run the application with authentication:
+
+```
+DEBUG=true GATEWAY_USERNAME=myuser GATEWAY_PASSWORD=mypass go run . --config config.json --basic-auth
+```
