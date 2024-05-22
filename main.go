@@ -59,7 +59,7 @@ func main() {
 				Value: false,
 			},
 			&cli.BoolFlag{
-				Name:  "basic-auth",
+				Name:  "auth",
 				Usage: "Enable basic authentication.",
 				Value: false,
 			},
@@ -79,7 +79,7 @@ func main() {
 			r.Use(middleware.Recoverer)
 			r.Use(middleware.Heartbeat("/health"))
 			// Add basic auth middleware
-			if cc.Bool("basic-auth") {
+			if cc.Bool("auth") {
 				username := os.Getenv("GATEWAY_USERNAME")
 				password := os.Getenv("GATEWAY_PASSWORD")
 				if username == "" || password == "" {
