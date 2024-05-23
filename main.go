@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/sygmaprotocol/rpc-gateway/internal/auth"
 	"log/slog"
 	"net/http"
 	"os"
@@ -16,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v2"
 
+	"github.com/sygmaprotocol/rpc-gateway/internal/auth"
 	"github.com/sygmaprotocol/rpc-gateway/internal/metrics"
 	"github.com/sygmaprotocol/rpc-gateway/internal/util"
 
