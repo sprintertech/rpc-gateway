@@ -10,6 +10,7 @@ func URLTokenAuth(token string) func(next http.Handler) http.Handler {
 			authToken := r.URL.Query().Get("auth_token")
 			if authToken == "" || authToken != token {
 				w.WriteHeader(http.StatusUnauthorized)
+
 				return
 			}
 			next.ServeHTTP(w, r)
