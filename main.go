@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/sygmaprotocol/rpc-gateway/internal/auth"
 	"log/slog"
 	"net/http"
 	"os"
@@ -80,14 +81,12 @@ func main() {
 			r.Use(middleware.Heartbeat("/health"))
 			// Add basic auth middleware
 			if cc.Bool("auth") {
-				username := os.Getenv("GATEWAY_USERNAME")
-				password := os.Getenv("GATEWAY_PASSWORD")
-				if username == "" || password == "" {
-					return errors.New("both GATEWAY_USERNAME and GATEWAY_PASSWORD environment variables must be set for basic authentication")
+				authToken := os.Getenv("GATEWAY_PASSWORD")
+				if authToken == "" {
+					return errors.New("GATEWAY_PASSWORD environment variables must be set for basic authentication")
 				}
-				r.Use(middleware.BasicAuth("API Realm", map[string]string{
-					username: password,
-				}))
+				r.Use(auth.UrlTokenAuth(authToken))
+				fmt.Println("Authentication configured on gateway")
 			}
 
 			server := &http.Server{
