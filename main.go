@@ -85,7 +85,7 @@ func main() {
 				if authToken == "" {
 					return errors.New("GATEWAY_PASSWORD environment variables must be set for basic authentication")
 				}
-				r.Use(auth.UrlTokenAuth(authToken))
+				r.Use(auth.URLTokenAuth(authToken))
 				fmt.Println("Authentication configured on gateway")
 			}
 

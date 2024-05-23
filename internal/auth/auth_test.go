@@ -8,7 +8,7 @@ import (
 
 func TestUrlTokenAuth(t *testing.T) {
 	validToken := "valid_token"
-	middleware := UrlTokenAuth(validToken)
+	middleware := URLTokenAuth(validToken)
 
 	tests := []struct {
 		name           string
