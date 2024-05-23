@@ -8,7 +8,6 @@ import (
 
 func TestURLTokenAuth(t *testing.T) {
 	validToken := "valid_token"
-	invalidToken := "invalid_token"
 	middleware := URLTokenAuth(validToken)
 
 	tests := []struct {
