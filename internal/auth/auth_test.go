@@ -6,8 +6,9 @@ import (
 	"testing"
 )
 
-func TestUrlTokenAuth(t *testing.T) {
+func TestURLTokenAuth(t *testing.T) {
 	validToken := "valid_token"
+	invalidToken := "invalid_token"
 	middleware := URLTokenAuth(validToken)
 
 	tests := []struct {
@@ -17,17 +18,17 @@ func TestUrlTokenAuth(t *testing.T) {
 	}{
 		{
 			name:           "Valid token",
-			url:            "/?auth_token=valid_token",
+			url:            "/some/path/valid_token",
 			expectedStatus: http.StatusOK,
 		},
 		{
 			name:           "Invalid token",
-			url:            "/?auth_token=invalid_token",
+			url:            "/some/path/invalid_token",
 			expectedStatus: http.StatusUnauthorized,
 		},
 		{
 			name:           "Missing token",
-			url:            "/",
+			url:            "/some/path/",
 			expectedStatus: http.StatusUnauthorized,
 		},
 	}
