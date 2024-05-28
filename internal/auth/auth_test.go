@@ -21,6 +21,11 @@ func TestURLTokenAuth(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
+			name:           "Valid token",
+			url:            "/some/really/long/path/valid_token",
+			expectedStatus: http.StatusOK,
+		},
+		{
 			name:           "Invalid token",
 			url:            "/some/path/invalid_token",
 			expectedStatus: http.StatusUnauthorized,
