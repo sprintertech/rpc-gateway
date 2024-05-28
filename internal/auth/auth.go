@@ -11,6 +11,7 @@ func URLTokenAuth(token string) func(next http.Handler) http.Handler {
 			pathParts := strings.Split(r.URL.Path, "/")
 			if len(pathParts) < 2 || pathParts[len(pathParts)-1] != token {
 				w.WriteHeader(http.StatusUnauthorized)
+
 				return
 			}
 			// Remove the token part from the path to forward the request to the next handler
