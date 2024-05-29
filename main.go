@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -44,6 +45,8 @@ type GatewayConfig struct {
 func main() {
 	c, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	fmt.Println(strings.Join(os.Args, ","))
 
 	app := &cli.App{
 		Name:  "rpc-gateway",
