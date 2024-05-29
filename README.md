@@ -109,6 +109,10 @@ Each JSON configuration file for the gateways can specify detailed settings for 
 ## Authentication
 Authentication can be enabled using the `--auth` flag. The auth token should be set through environment variables `GATEWAY_PASSWORD`.
 
+Auth token needs to be the last entry in the RPC gateway URL. Example:
+
+`https://sample/rpc-gateway/sepolia/a1b2c3d4e5f7`
+
 ### Running the Application
 To run the application with authentication:
 

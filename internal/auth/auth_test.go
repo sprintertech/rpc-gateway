@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestUrlTokenAuth(t *testing.T) {
+func TestURLTokenAuth(t *testing.T) {
 	validToken := "valid_token"
 	middleware := URLTokenAuth(validToken)
 
@@ -17,17 +17,22 @@ func TestUrlTokenAuth(t *testing.T) {
 	}{
 		{
 			name:           "Valid token",
-			url:            "/?auth_token=valid_token",
+			url:            "/some/path/valid_token",
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name:           "Valid token",
+			url:            "/some/really/long/path/valid_token",
 			expectedStatus: http.StatusOK,
 		},
 		{
 			name:           "Invalid token",
-			url:            "/?auth_token=invalid_token",
+			url:            "/some/path/invalid_token",
 			expectedStatus: http.StatusUnauthorized,
 		},
 		{
 			name:           "Missing token",
-			url:            "/",
+			url:            "/some/path/",
 			expectedStatus: http.StatusUnauthorized,
 		},
 	}
