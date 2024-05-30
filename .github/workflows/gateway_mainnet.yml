@@ -1,0 +1,73 @@
+name: RPC-Gateway Mainnet
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'The Release tag Version'
+        required: false
+        type: string
+
+
+env:
+  AWS_REGION: '${{ secrets.AWS_REGION }}'
+  ENVIRONMENT: MAINNET
+  AWS_MAINNET: '${{ secrets.AWS_MAINNET }}'
+  REGISTRY: 'ghcr.io'
+
+jobs:
+  deploy:
+   name: deploy
+   runs-on: ubuntu-latest
+
+   permissions:
+     contents: read
+     id-token: write
+     actions: write
+
+   steps:
+     - name: checkout the source code
+       uses: actions/checkout@v4
+
+     - name: checkout ecs repo
+       uses: actions/checkout@v3
+       with:
+         repository: sygmaprotocol/devops
+         token: ${{ secrets.GHCR_TOKEN }}
+         ref: main
+
+     - name: render jinja2 templates to task definition json files
+       uses: cuchi/jinja2-action@v1.2.0
+       with:
+         template: 'proxy_gateway/ecs/task_definition-${{ env.ENVIRONMENT }}.j2'
+         output_file: 'proxy_gateway/ecs/task_definition-${{ env.ENVIRONMENT }}.json'
+         data_format: json
+         variables: |
+           awsAccountId=${{ env.AWS_MAINNET }}
+           awsRegion=${{ env.AWS_REGION }}
+           awsEnv=${{ env.ENVIRONMENT }}
+           imageTag=${{ inputs.release_tag }}
+
+     - name: Configure AWS Credentials
+       uses: aws-actions/configure-aws-credentials@v4
+       with:
+         role-to-assume: arn:aws:iam::${{ env.AWS_MAINNET }}:role/github-actions-${{ env.ENVIRONMENT }}-sygma
+         aws-region: ${{ env.AWS_REGION }}
+         role-session-name: GithubActions
+
+     - name: Deploy to Amazon ECS
+       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+       with:
+         task-definition: 'proxy_gateway/ecs/task_definition-${{ env.ENVIRONMENT }}.json'
+         service: rpc-service-${{ env.ENVIRONMENT }}
+         cluster: relayer-${{ env.ENVIRONMENT }}
+         wait-for-service-stability: true
+
+     - name: slack notify
+       uses: 8398a7/action-slack@v3
+       with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,job,eventName,ref,workflow
+       env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
+       if: always()
