@@ -107,15 +107,40 @@ Each JSON configuration file for the gateways can specify detailed settings for 
 ```
 
 ## Authentication
-Authentication can be enabled using the `--auth` flag. The auth token should be set through environment variables `GATEWAY_PASSWORD`.
 
-Auth token needs to be the last entry in the RPC gateway URL. Example:
+Authentication can be enabled using the `--auth` flag. The authentication system uses a token-based approach with rate limiting.
 
-`https://sample/rpc-gateway/sepolia/a1b2c3d4e5f7`
+### Token Configuration
 
-### Running the Application
+The token configuration should be provided through the `GATEWAY_TOKEN_MAP` environment variable. This variable should contain a JSON string representing a map of tokens to their corresponding information. Each token entry includes a name and the number of requests allowed per second.
+
+Example of `GATEWAY_TOKEN_MAP`:
+
+```json
+{
+  "token1": {"name": "User1", "numOfRequestPerSec": 10},
+  "token2": {"name": "User2", "numOfRequestPerSec": 20}
+}
+```
+
+### URL Format
+
+When authentication is enabled, the auth token needs to be the last entry in the RPC gateway URL. 
+
+Example:
+
+`https://sample/rpc-gateway/sepolia/token1`
+
+In this example, `token1` is the authentication token that must match one of the tokens defined in the `GATEWAY_TOKEN_MAP`.
+
+### Rate Limiting
+
+Each token has its own rate limit, defined by the `numOfRequestPerSec` value in the token configuration. If a client exceeds this limit, they will receive a 429 (Too Many Requests) status code.
+
+### Running the Application with Authentication
+
 To run the application with authentication:
 
-```
-DEBUG=true GATEWAY_PASSWORD=my_auth_token go run . --config config.json --auth
-```
+```bash
+export GATEWAY_TOKEN_MAP='{"token1":{"name":"User1","numOfRequestPerSec":10},"token2":{"name":"User2","numOfRequestPerSec":20}}'
+DEBUG=true go run . --config config.json --auth
