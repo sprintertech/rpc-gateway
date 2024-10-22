@@ -19,7 +19,7 @@ func TestBasicHealthchecker(t *testing.T) {
 	defer cancel()
 
 	healtcheckConfig := HealthCheckerConfig{
-		URL:              env.GetDefault("RPC_GATEWAY_NODE_URL_1", "https://cloudflare-eth.com"),
+		URL:              env.GetDefault("RPC_GATEWAY_NODE_URL_1", "https://lodestar-holeskyrpc.chainsafe.io/"),
 		Interval:         util.DurationUnmarshalled(2 * time.Second),
 		Timeout:          util.DurationUnmarshalled(3 * time.Second),
 		FailureThreshold: 1,
