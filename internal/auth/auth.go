@@ -14,7 +14,7 @@ type TokenInfo struct {
 	NumOfRequestPerSec int    `json:"numOfRequestPerSec"`
 }
 
-// Define a custom type for the context key
+// ContextKeyType custom type for the context key.
 type ContextKeyType string
 
 const TokenInfoKey ContextKeyType = "tokeninfo"
@@ -33,6 +33,7 @@ func URLTokenAuth(tokenToName map[string]TokenInfo) func(next http.Handler) http
 			pathParts := strings.Split(r.URL.Path, "/")
 			if len(pathParts) < 2 {
 				w.WriteHeader(http.StatusUnauthorized)
+
 				return
 			}
 
@@ -40,17 +41,20 @@ func URLTokenAuth(tokenToName map[string]TokenInfo) func(next http.Handler) http
 			tInfo, validToken := tokenToName[token]
 			if !validToken {
 				w.WriteHeader(http.StatusUnauthorized)
+
 				return
 			}
 
 			limiter, exists := limiters[token]
 			if !exists {
 				w.WriteHeader(http.StatusInternalServerError)
+
 				return
 			}
 
 			if !limiter.Allow() {
 				w.WriteHeader(http.StatusTooManyRequests)
+
 				return
 			}
 
