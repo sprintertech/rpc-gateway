@@ -1,0 +1,31 @@
+{
+  "name": "Sepolia",
+  "proxy": {
+    "path": "sepolia",
+    "upstreamTimeout": "1s"
+  },
+  "healthChecks": {
+    "interval": "20s",
+    "timeout": "1s",
+    "failureThreshold": 2,
+    "successThreshold": 1
+  },
+  "targets": [
+    {
+      "name": "ChainSafe",
+      "connection": {
+        "http": {
+          "url": "https://lodestar-sepoliarpc.chainsafe.io"
+        }
+      }
+    },
+    {
+      "name": "Tenderly",
+      "connection": {
+        "http": {
+          "url": "https://sepolia.gateway.tenderly.co"
+        }
+      }
+    }
+  ]
+}

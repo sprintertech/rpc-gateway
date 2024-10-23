@@ -1,0 +1,16 @@
+{
+  "metrics": {
+    "port": 9090
+  },
+  "port": 4000,
+  "gateways": [
+    {
+      "configFile": "/app/config_holesky.json",
+      "name": "Holesky gateway"
+    },
+    {
+      "configFile": "/app/config_sepolia.json",
+      "name": "Sepolia gateway"
+    }
+  ]
+}

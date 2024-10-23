@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -55,7 +56,7 @@ func main() {
 			&cli.StringFlag{
 				Name:  "config",
 				Usage: "The JSON configuration file path with gateway configurations.",
-				Value: "config.JSON", // Default configuration file name
+				Value: "config.json", // Default configuration file name
 			},
 			&cli.BoolFlag{
 				Name:  "env",
@@ -84,11 +85,24 @@ func main() {
 			r.Use(middleware.Heartbeat("/health"))
 			// Add basic auth middleware
 			if cc.Bool("auth") {
-				authToken := os.Getenv("GATEWAY_PASSWORD")
-				if authToken == "" {
-					return errors.New("GATEWAY_PASSWORD environment variables must be set for basic authentication")
+				tokenMapJSON := os.Getenv("GATEWAY_TOKEN_MAP")
+				if tokenMapJSON == "" {
+					return errors.New("GATEWAY_TOKEN_MAP environment variable must be set for authentication")
 				}
-				r.Use(auth.URLTokenAuth(authToken))
+
+				var tokenMap map[string]auth.TokenInfo
+
+				if err := json.Unmarshal([]byte(tokenMapJSON), &tokenMap); err != nil {
+					return errors.Wrap(err, "failed to parse GATEWAY_TOKEN_MAP")
+				}
+
+				for _, details := range tokenMap {
+					if details.NumOfRequestPerSec <= 0 {
+						return errors.New("numOfRequestPerSec must be a positive number")
+					}
+				}
+
+				r.Use(auth.URLTokenAuth(tokenMap))
 				fmt.Println("Authentication configured on gateway")
 			}
 

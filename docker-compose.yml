@@ -1,0 +1,49 @@
+services:
+  rpc-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:4000  # Main port
+      - 9090:9090  # Metrics port
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./config_sepolia.json:/app/config_sepolia.json:ro
+      - ./config_holesky.json:/app/config_holesky.json:ro
+    environment:
+      - GATEWAY_TOKEN_MAP={"token1":{"name":"token1","numOfRequestPerSec":10},"token2":{"name":"token2","numOfRequestPerSec":20}}
+    user: nobody
+    entrypoint: ["/app/rpc-gateway", "--config", "/app/config.json", "--auth"]
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9091:9090"  # Changed to 9091 on the host
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - rpc-gateway
+    networks:
+      - app-network
+
+volumes:
+  grafana-storage:
+
+networks:
+  app-network:
+    driver: bridge
