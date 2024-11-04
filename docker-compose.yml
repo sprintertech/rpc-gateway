@@ -20,7 +20,7 @@ services:
   prometheus:
     image: prom/prometheus:v2.44.0
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./docker-compose-config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
@@ -34,6 +34,7 @@ services:
       - 3000:3000
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./docker-compose-config/grafana/provisioning/:/etc/grafana/provisioning/
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
