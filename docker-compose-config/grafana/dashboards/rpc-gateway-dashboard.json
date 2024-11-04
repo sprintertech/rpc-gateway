@@ -1,0 +1,177 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Block Number (Holesky)",
+      "targets": [
+        {
+          "expr": "zeroex_rpc_gateway_provider_block_number_Holesky",
+          "legendFormat": "{{provider}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Block Number (Sepolia)",
+      "targets": [
+        {
+          "expr": "zeroex_rpc_gateway_provider_block_number_Sepolia",
+          "legendFormat": "{{provider}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Gas Limit (Holesky)",
+      "targets": [
+        {
+          "expr": "zeroex_rpc_gateway_provider_gasLimit_number_Holesky",
+          "legendFormat": "{{provider}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Gas Limit (Sepolia)",
+      "targets": [
+        {
+          "expr": "zeroex_rpc_gateway_provider_gasLimit_number_Sepolia",
+          "legendFormat": "{{provider}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Provider Info (Holesky)",
+      "targets": [
+        {
+          "expr": "zeroex_rpc_gateway_provider_info_Holesky",
+          "legendFormat": "{{provider}} (Index {{index}})",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Provider Info (Sepolia)",
+      "targets": [
+        {
+          "expr": "zeroex_rpc_gateway_provider_info_Sepolia",
+          "legendFormat": "{{provider}} (Index {{index}})",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Provider Status (Holesky)",
+      "targets": [
+        {
+          "expr": "zeroex_rpc_gateway_provider_status_Holesky",
+          "legendFormat": "{{provider}} ({{type}})",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Provider Status (Sepolia)",
+      "targets": [
+        {
+          "expr": "zeroex_rpc_gateway_provider_status_Sepolia",
+          "legendFormat": "{{provider}} ({{type}})",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      }
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "RPC gateway",
+  "uid": "be2wsi38prfggf",
+  "version": 2,
+  "weekStart": ""
+}

@@ -35,10 +35,13 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./docker-compose-config/grafana/provisioning/:/etc/grafana/provisioning/
+      - ./docker-compose-config/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./docker-compose-config/grafana/dashboards:/etc/grafana/dashboards
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - rpc-gateway
+      - prometheus
     networks:
       - app-network
 
